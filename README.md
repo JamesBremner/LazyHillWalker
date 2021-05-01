@@ -9,7 +9,7 @@ sqrt(1+(height(a)-(height(b))^2)
 
 A space delimited text file.
 
-# Elevation grid
+### Elevation grid
 
 Specifies elevation of an m row and n column grid
 | Column | Desscription | 
@@ -17,7 +17,7 @@ Specifies elevation of an m row and n column grid
  1 | "h", for height
  2 ... n+1 | height for each location in a row n wide 
 
-# Starting and ending locations
+### Starting and ending locations
 
 | Column | Desscription | 
 |---|---|
