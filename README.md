@@ -30,3 +30,13 @@ Specifies elevation of an m row and n column grid
 1 | "e", for end
 2 | x location column
 3 | y location row
+
+## Sample input
+
+```
+h 1 2 3
+h 2 5 2
+h 3 2 1
+s 1 1
+e 3 3
+```
