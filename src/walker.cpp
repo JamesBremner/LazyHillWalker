@@ -1,51 +1,9 @@
-#include <iostream>
-#include <fstream>
-#include <boost/graph/adjacency_list.hpp>
+
+#include "walker.h"
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include "ParseSpaceDelimited.h"
 
-/// edge properties
-class cEdge
-{
-public:
-    cEdge()
-        : myCost(1)
-    {
-    }
-    int myCost;
-};
-
-/// node properties
-class cNode
-{
-public:
-    cNode(const std::string &name)
-        : myName(name)
-    {
-    }
-    cNode()
-        : myName("???")
-    {
-    }
-    std::string myName;
-    float myHeight;
-};
-
-/// declaration of boost graph configuration
-using namespace boost;
-typedef boost::adjacency_list<
-    boost::listS,
-    boost::vecS,
-    boost::directedS,
-    cNode,
-    cEdge>
-    graph_t;
-
-class cWalker
-{
-public:
-    /// read input
-    void read(
+void cWalker::read(
         const std::string &fname)
     {
         std::ifstream inf(fname);
@@ -94,82 +52,6 @@ public:
         }
         myRowCount = myGrid.size();
     }
-
-    void ConstructBoostGraph();
-
-    void Path();
-    
-    std::string linksText()
-    {
-        std::stringstream ss;
-        graph_traits<graph_t>::edge_iterator ei, ei_end;
-        for (tie(ei, ei_end) = edges(myGraph); ei != ei_end; ++ei)
-        {
-            ss << "("
-               << myGraph[source(*ei, myGraph)].myName << ","
-               << myGraph[target(*ei, myGraph)].myName << ","
-               << myGraph[*ei].myCost
-               << ") ";
-        }
-        ss << "\n";
-        return ss.str();
-    }
-
-    std::string pathText()
-{
-    std::stringstream ss;
-    for (auto n : myPath)
-        ss << myGraph[n].myName << " -> ";
-    ss << "\n";
-    return ss.str();
-}
-
-private:
-    int myColCount;
-    int myRowCount;
-    std::vector<std::vector<float>> myGrid;
-    int myStartCol;
-    int myStartRow;
-    int myEndCol;
-    int myEndRow;
-    graph_t myGraph;
-    std::vector<int> myPath;
-
-    /** Find node by name
- * @return index of node found
- * 
- * If node by same name already exists, return its index
- * otherwise add a new node and return its index
- */
-    int findoradd(const std::string &name)
-    {
-        int n = find(name);
-        if (n < 0)
-            n = add_vertex(name, myGraph);
-        return n;
-    }
-
-    int find(const std::string &name)
-    {
-        for (int n = 0; n < num_vertices(myGraph); n++)
-        {
-            if (myGraph[n].myName == name)
-            {
-                return n;
-            }
-        }
-        return -1;
-    }
-    void AddLink(int n, int m, float cost)
-    {
-        myGraph[add_edge(n, m, myGraph).first].myCost = cost;
-        myGraph[add_edge(m, n, myGraph).first].myCost = cost;
-    }
-    std::string name(int col, int row)
-    {
-        return std::to_string(col+1) + "_" + std::to_string(row+1);
-    }
-};
 
     void cWalker::ConstructBoostGraph()
     {
@@ -247,30 +129,57 @@ private:
     std::reverse(myPath.begin(), myPath.end()); 
     }
 
-main(int argc, char *argv[])
-{
-    // intoduce ourself
-    std::cout << "Lazy Hill Walker\n";
-
-    // check command line
-    if (argc != 2)
+        std::string cWalker::linksText()
     {
-        std::cout << "usage: walker <inputfilename>\n";
-        exit(0);
+        std::stringstream ss;
+        graph_traits<graph_t>::edge_iterator ei, ei_end;
+        for (tie(ei, ei_end) = edges(myGraph); ei != ei_end; ++ei)
+        {
+            ss << "("
+               << myGraph[source(*ei, myGraph)].myName << ","
+               << myGraph[target(*ei, myGraph)].myName << ","
+               << myGraph[*ei].myCost
+               << ") ";
+        }
+        ss << "\n";
+        return ss.str();
     }
 
-    // construct the walker
-    cWalker walker;
-
-    // read input file
-    walker.read(argv[1]);
-
-    // construct graph with orthogonal links costed by elevation change
-    walker.ConstructBoostGraph();
-
-    // find the minimum cost path
-    walker.Path();
-    std::cout 
-    << "Path found: "
-    << walker.pathText();
+        std::string cWalker::pathText()
+{
+    std::stringstream ss;
+    for (auto n : myPath)
+        ss << myGraph[n].myName << " -> ";
+    ss << "\n";
+    return ss.str();
 }
+
+    int cWalker::findoradd(const std::string &name)
+    {
+        int n = find(name);
+        if (n < 0)
+            n = add_vertex(name, myGraph);
+        return n;
+    }
+
+    int cWalker::find(const std::string &name)
+    {
+        for (int n = 0; n < num_vertices(myGraph); n++)
+        {
+            if (myGraph[n].myName == name)
+            {
+                return n;
+            }
+        }
+        return -1;
+    }
+    void cWalker::AddLink(int n, int m, float cost)
+    {
+        myGraph[add_edge(n, m, myGraph).first].myCost = cost;
+        myGraph[add_edge(m, n, myGraph).first].myCost = cost;
+    }
+    std::string cWalker::name(int col, int row)
+    {
+        return std::to_string(col+1) + "_" + std::to_string(row+1);
+    }
+

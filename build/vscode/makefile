@@ -5,15 +5,17 @@ VPATH = ../../src
 INCS = \
 	-I../../../boost/boost1_72
 
+DEPS = walker.h
+
 # folder for .o files
 ODIR=./obj
 
 # sources
-_OBJ = walker.o 
+_OBJ = LazyHillWalker.o walker.o 
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
-$(ODIR)/%.o: %.cpp
+$(ODIR)/%.o: %.cpp $(DEPS)
 	g++   -std=c++17 -c -o $@ $< $(INCS)
 
 walker: $(OBJ) 
