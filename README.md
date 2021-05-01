@@ -40,3 +40,16 @@ h 3 2 1
 s 1 1
 e 3 3
 ```
+
+## Sample output
+
+```
+C:\Users\James\code\LazyHillWalker\bin>walker.exe ..\data\hill.txt
+Lazy Hill Walker
+h 1 2 3
+h 2 5 2
+h 3 2 1
+s 1 1
+e 3 3
+Path found: 1_1 -> 2_1 -> 3_1 -> 3_2 -> 3_3 ->
+```
